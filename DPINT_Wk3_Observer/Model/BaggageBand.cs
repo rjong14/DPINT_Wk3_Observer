@@ -5,10 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace DPINT_Wk3_Observer.Model
-{
-    public class Baggageband
-    {
+namespace DPINT_Wk3_Observer.Model {
+    public class Baggageband : Observable<Baggageband> {
         public string Naam { get; set; }
         private int _aantalKoffersPerMinuut;
         public int AantalKoffers { get; set; }
@@ -16,42 +14,41 @@ namespace DPINT_Wk3_Observer.Model
 
         private Timer _huidigeVluchtTimer;
 
-        public Baggageband(string naam, int aantalKoffersPerMinuut)
-        {
-            Naam = naam;
-            _aantalKoffersPerMinuut = aantalKoffersPerMinuut;
+        public Baggageband (string naam, int aantalKoffersPerMinuut) {
+            Naam=naam;
+            _aantalKoffersPerMinuut=aantalKoffersPerMinuut;
         }
 
-        public void HandelNieuweVluchtAf(Vlucht vlucht)
-        {
-            VluchtVertrokkenVanuit = vlucht.VertrokkenVanuit;
-            AantalKoffers = vlucht.AantalKoffers;
+        public void HandelNieuweVluchtAf (Vlucht vlucht) {
+            VluchtVertrokkenVanuit=vlucht.VertrokkenVanuit;
+            AantalKoffers=vlucht.AantalKoffers;
 
-            if (_huidigeVluchtTimer != null)
-            {
-                _huidigeVluchtTimer.Stop();
+            if (_huidigeVluchtTimer!=null) {
+                _huidigeVluchtTimer.Stop ();
             }
 
-            _huidigeVluchtTimer = new Timer();
-            _huidigeVluchtTimer.Interval = (int)((60.0 / _aantalKoffersPerMinuut) * 1000);
-            _huidigeVluchtTimer.Tick += KofferVanBandGehaald;
+            _huidigeVluchtTimer=new Timer ();
+            _huidigeVluchtTimer.Interval=(int) ((60.0/_aantalKoffersPerMinuut)*1000);
+            _huidigeVluchtTimer.Tick+=KofferVanBandGehaald;
 
-            _huidigeVluchtTimer.Start();
+            _huidigeVluchtTimer.Start ();
 
+
+            Notify (this);
             // TODO: We moeten het laten weten dat we een update hebben!
         }
 
-        private void KofferVanBandGehaald(object sender, EventArgs e)
-        {
+        private void KofferVanBandGehaald (object sender, EventArgs e) {
             AantalKoffers--;
 
-            if(AantalKoffers == 0)
-            {
-                VluchtVertrokkenVanuit = null;
-                _huidigeVluchtTimer.Stop();
+            if (AantalKoffers==0) {
+                VluchtVertrokkenVanuit=null;
+                _huidigeVluchtTimer.Stop ();
             }
 
+            Notify (this);
             // TODO: We moeten het laten weten dat we een update hebben!
         }
+
     }
 }
